@@ -5,8 +5,8 @@
 #include <cstdint>
 
 
-#define UInt uint32_t                   //
-#define UChar uint8_t                   //
+#define UInt uint32_t                   // 32 bit integral type
+#define UChar uint8_t                   // 8 bit integral type
 #define DSON_UINT_MAX 4294967295        // 2^32 - 1
 #define DSON_STR_NULL   "{#NULL}"
 #define DSON_STR_GROUP  "{#GROUP}"

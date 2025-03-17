@@ -20,6 +20,8 @@ namespace DSON {
         else { std::cout << IN_Msg << std::endl; }
     }
 
+    DSON_Node* DefaultAllocator(void* IN_Ptr) { return new DSON_Node(); }
+
     std::vector<std::string> SplitString(std::string IN_Str, char IN_Delimiter) {
         std::vector<std::string> Result;
 
