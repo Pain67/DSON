@@ -20,7 +20,10 @@ namespace DSON {
         else { std::cout << IN_Msg << std::endl; }
     }
 
-    DSON_Node* DefaultAllocator(void* IN_Ptr) { return new DSON_Node(); }
+    DSON_Node* DefaultAllocator(void* IN_Ptr) {
+        (void)IN_Ptr;
+        return new DSON_Node();
+    }
 
     std::vector<std::string> SplitString(std::string IN_Str, char IN_Delimiter) {
         std::vector<std::string> Result;
@@ -214,7 +217,7 @@ bool DSON_Node::AddValue(std::string IN_Name, std::string IN_Value, bool IN_isAl
             IN_Name,
             IN_Value
         ));
-        DSON_Node* NewNode = new DSON_Node();
+        DSON_Node* NewNode = DSON::MemAllocCallback(DSON::MemAllocParam);
         NewNode->Name = IN_Name;
         NewNode->Value = IN_Value;
         NewNode->ParentPtr = this;
@@ -255,7 +258,7 @@ bool DSON_Node::AddEmptyGroup(std::string IN_Name) {
             return false;
         }
 
-        DSON_Node* NewNode = new DSON_Node();
+        DSON_Node* NewNode = DSON::MemAllocCallback(DSON::MemAllocParam);
         NewNode->Name = IN_Name;
         NewNode->ParentPtr = this;
         NewNode->Level = Level + 1;
@@ -473,7 +476,7 @@ bool DSON_Parser::_Internal_ParseLine(std::string IN_Line, UInt IN_LineNum) {
                 return false;
             }
 
-            DSON_Node* NewNode = new DSON_Node();
+            DSON_Node* NewNode = DSON::MemAllocCallback(DSON::MemAllocParam);
             NewNode->ParentPtr = CurrNode;
             NewNode->Level = CurrNode->Level + 1;
             CurrNode->Childs.push_back(NewNode);
@@ -578,7 +581,7 @@ bool DSON_Parser::_Internal_ParseLine(std::string IN_Line, UInt IN_LineNum) {
 }
 
 void DSON_Parser::_Internal_Init() {
-    RootNode = new DSON_Node();
+    RootNode = DSON::MemAllocCallback(DSON::MemAllocParam);
     RootNode->Name = "Root";
     CurrNode = RootNode;
 }

@@ -20,14 +20,23 @@ namespace DSON {
     typedef void(*DSON_Log_Callback)(std::string);
     typedef DSON_Node*(*DSON_Mem_Alloc)(void*);
 
+    // ------------------------------------------------------
+    // Log stuff
     DSON_Log_Callback LogCallback = nullptr;
-    DSON_Mem_Alloc MemAllocCallback = nullptr;
-
     void Log_Error(std::string IN_Msg);
     void Log_Debug(std::string IN_Msg);
+    // ------------------------------------------------------
+    // Memory Alloc Stuff
 
+    // Can be used for custom memory allocation
+    // When a new DSON node created, this param will be passed
+    // to the MemAllocCallback function
+    void* MemAllocParam = nullptr;
     DSON_Node* DefaultAllocator(void* IN_Ptr);
+    DSON_Mem_Alloc MemAllocCallback = &DefaultAllocator;
 
+    // ------------------------------------------------------
+    // String related functions
     std::vector<std::string> SplitString(std::string IN_Str, char IN_Delimiter);
     std::string ReplaceString(std::string IN_Str, std::string IN_From, std::string IN_To);
 
@@ -64,6 +73,7 @@ namespace DSON {
         IN_Template = DSON::ReplaceString(IN_Template, "{3}", GetAsString(IN_D));
         return IN_Template;
     }
+    // ------------------------------------------------------
 }
 
 // Struct To represent each kay-Value par as a Node
