@@ -8,6 +8,18 @@
 // ------------------------------------------------------------------------------------------------------------------
 
 namespace DSON {
+    std::string EnumToString(LogLevel IN_Value) {
+        switch(IN_Value) {
+            case LogLevel::UNDEFINED: return "UNDEFINED";
+            case LogLevel::DEBUG: return "DEBUG";
+            case LogLevel::INFO: return "INFO";
+            case LogLevel::WARNING: return "WARNING";
+            case LogLevel::ERROR: return "ERROR";
+        }
+
+        return DSON_STR_NULL;
+    }
+
     void Log_Error(std::string IN_Msg) {
         IN_Msg = "[ERROR] " + IN_Msg;
         if (LogCallback) { LogCallback(IN_Msg); }
