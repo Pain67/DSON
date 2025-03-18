@@ -15,25 +15,53 @@ namespace DSON {
             case LogLevel::INFO: return "INFO";
             case LogLevel::WARNING: return "WARNING";
             case LogLevel::ERROR: return "ERROR";
+            case LogLevel::NONE: return "NONE";
         }
 
         return DSON_STR_NULL;
     }
 
-    void Log_Error(std::string IN_Msg) {
-        IN_Msg = "[ERROR] " + IN_Msg;
-        if (LogCallback) { LogCallback(IN_Msg); }
-        else { std::cout << IN_Msg << std::endl; }
+    void Log_Debug(std::string IN_Msg) {
+        if (MinLogLevel > LogLevel::DEBUG) { return; }
+
+        if (LogCallback) { LogCallback(LogLevel::DEBUG, IN_Msg); }
+        else {
+            IN_Msg = "[DEBUG] " + IN_Msg;
+            std::cout << IN_Msg << std::endl;
+        }
+    }
+    void Log_Info(std::string IN_Msg) {
+        if (MinLogLevel > LogLevel::INFO) { return; }
+
+        if (LogCallback) { LogCallback(LogLevel::INFO, IN_Msg); }
+        else {
+            IN_Msg = "[INFO] " + IN_Msg;
+            std::cout << IN_Msg << std::endl;
+        }
+    }
+    void Log_Warning(std::string IN_Msg) {
+        if (MinLogLevel > LogLevel::WARNING) { return; }
+
+        if (LogCallback) { LogCallback(LogLevel::WARNING, IN_Msg); }
+        else {
+            IN_Msg = "[WARNING] " + IN_Msg;
+            std::cout << IN_Msg << std::endl;
+        }
     }
 
-    void Log_Debug(std::string IN_Msg) {
-        IN_Msg = "[DEBUG] " + IN_Msg;
-        if (LogCallback) { LogCallback(IN_Msg); }
-        else { std::cout << IN_Msg << std::endl; }
+    void Log_Error(std::string IN_Msg) {
+        if (MinLogLevel > LogLevel::ERROR) { return; }
+
+        if (LogCallback) { LogCallback(LogLevel::ERROR, IN_Msg); }
+        else {
+            IN_Msg = "[ERROR] " + IN_Msg;
+            std::cout << IN_Msg << std::endl;
+        }
     }
+
 
     DSON_Node* DefaultAllocator(void* IN_Ptr) {
-        (void)IN_Ptr;
+        (void)IN_Ptr;   // <- To Avoid unused argument warning
         return new DSON_Node();
     }
 
@@ -642,5 +670,3 @@ DSON_Node* DSON_Parser::ParseString(std::string IN_Str) {
     return RootNode;
 }
 
-
-int main() { return 0; }

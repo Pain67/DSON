@@ -17,24 +17,29 @@
 class DSON_Node;
 
 namespace DSON {
-    typedef void(*DSON_Log_Callback)(std::string);
-    typedef DSON_Node*(*DSON_Mem_Alloc)(void*);
-
-    enum class LogLevel {
+    enum class LogLevel : UChar {
         UNDEFINED = 0,
         DEBUG,
         INFO,
         WARNING,
-        ERROR
+        ERROR,
+        NONE
     };
+
+    typedef void(*DSON_Log_Callback)(LogLevel, std::string);
+    typedef DSON_Node*(*DSON_Mem_Alloc)(void*);
 
     std::string EnumToString(LogLevel IN_Value);
 
     // ------------------------------------------------------
     // Log stuff
+    LogLevel MinLogLevel = LogLevel::DEBUG;
     DSON_Log_Callback LogCallback = nullptr;
-    void Log_Error(std::string IN_Msg);
+
     void Log_Debug(std::string IN_Msg);
+    void Log_Info(std::string IN_Msg);
+    void Log_Warning(std::string IN_Msg);
+    void Log_Error(std::string IN_Msg);
     // ------------------------------------------------------
     // Memory Alloc Stuff
 
