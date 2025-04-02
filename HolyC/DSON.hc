@@ -918,8 +918,7 @@ DSON_Node* DSON_ParseString(U8* IN_String) {
 
 
 U0 Main() {
-	U8 *message = "hello world";
+	U8 *message = "DSON From HolyC";
 	"%s\n",message;
-	DSON_Node* Root = DSON_ParseTextFile("/mnt/nvme0n1p4/Development/GIT/DSON/Cpp/Test.dson");
 }
 Main;
