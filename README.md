@@ -34,7 +34,13 @@ Syntax Rules
   - A single line can hold multiple key-value pairs but each pair has to be finished within the line (except for groups)
   - Groups can be nested indefinitely.
 - Comments
-  - Any line starting with # sign will be skipped
+  - Comments needs to be marked with '# ' (the space after the '#' is important to make it a standalone character)
+  - Comment can be from the start of the line or mid-line
+- White Spaces
+  - White spaces generally ignored except around tokens. Each token has to be a stand alone character.
+  - Space cannot directly be in a value as that would make it multiple tokens. If space is required in token value then '&#38;#32;' can be used insted.
+    - 'AddStringValue' function will automatically replace ' ' with '&#38;#32;'
+    - 'GetValueString' and 'Print' will automatically replace '&#38;#32;' with ' '
 <br/>
 
 Why Tho?
