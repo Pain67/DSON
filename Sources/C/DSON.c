@@ -448,6 +448,7 @@ extern "C" {
 		fflush(stdout);
 
 		free(Buffer);
+		free(LogType);
 	}
 
 	void DSON_LogDebug(char* IN_Format, ...) {
@@ -726,6 +727,7 @@ extern "C" {
 
 		free(Buffer_A);
 		free(Buffer_B);
+		free(Temp);
 		return FinalBuffer;
 	}
 	int DSON_Node_Count(DSON_Node* IN_Node) {
@@ -899,11 +901,13 @@ extern "C" {
 				 List.Entries[0],
 				 IN_Node->Name
 			);
+			DSON_FreeStringList(&List);
 			return NULL;
 		}
 		DSON_Node* Target = IN_Node->Childs->Entries[Index];
 
 		if (List.Num == 1) {
+			DSON_FreeStringList(&List);
 			if (DSON_Node_isValue(Target)) {
 				return DSON_AddSpace(Target->Value);
 			}
@@ -918,7 +922,10 @@ extern "C" {
 		}
 		else {
 			char* NewKey = DSON_MergeString(&List,'/',true);
-			return DSON_Node_GetValueString(Target, NewKey);
+			char* A = DSON_Node_GetValueString(Target, NewKey);
+			free(NewKey);
+			DSON_FreeStringList(&List);
+			return A;
 		}
 
 		// UNREACHABLE
@@ -1320,6 +1327,7 @@ extern "C" {
 		fprintf(FilePointer,"%s", String);
 
 		fclose(FilePointer);
+		free(String);
 		return true;
 	}
 	bool DSON_SaveToBinaryFile(DSON_Node* IN_Node, char* IN_FileName) {
@@ -1329,6 +1337,7 @@ extern "C" {
 		FilePointer = fopen(IN_FileName, "wb");
 		if (FilePointer == NULL) {
 			DSON_LogError("Unable to save file [%s]", IN_FileName);
+			if (String != NULL) { free(String); }
 			return false;
 		}
 
@@ -1336,6 +1345,7 @@ extern "C" {
 		fwrite(String, sizeof(char), Len, FilePointer);
 
 		fclose(FilePointer);
+		if (String != NULL) { free(String); }
 		return true;
 	}
 
