@@ -1,9 +1,0 @@
-name = [ JohnDoe ] age = [ 30 ]
-address = {
-    street = [ 123MainSt ] city = [ Springfield ] state = [ IL ] zip = [ 62704 ]
-}
-contacts = {
-    phone = [ 555-1234 ] email = [ john.doe@example.com ]
-    social = { twitter = [ @johndoe ] linkedin = [ /in/johndoe ] }
-}
-bio = { hobbies = [ hiking ] profession = [ SoftwareEngineer ] }
