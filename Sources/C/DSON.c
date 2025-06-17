@@ -85,6 +85,9 @@ DSON_StringList DSON_SplitString(char* IN_String, char IN_Delimiter);
 char* DSON_MergeString(DSON_StringList* IN_List, char IN_Delimiter, bool IN_isSkipFirst);
 char* DSON_CopyString(char* IN_String);
 char* DSON_MakeString(char* IN_Format, ...);
+char* DSON_ReplaceString(char* IN_From, char* IN_To, char* IN_String);
+char* DSON_RemoveSpace(char* IN_String);
+char* DSON_AddSpace(char* IN_String);
 char* DSON_IntToString(long long IN_Value);
 char* DSON_UIntToString(unsigned long long IN_Value);
 char* DSON_FloatToString(float IN_Value);
@@ -322,6 +325,58 @@ char* DSON_MakeString(char* IN_Format, ...) {
 	return Result;
 }
 
+char* DSON_ReplaceString(char* IN_From, char* IN_To, char* IN_String) {
+	// https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
+	// Posted by: jmucchiello
+	// Edited by: 1156752
+
+	// The optimizer should eliminate most of the local variables
+	char *result; // the return string
+	char *ins;    // the next insert point
+	char *tmp;    // varies
+	int len_rep;  // length of IN_From (the string to remove)
+	int len_with; // length of IN_To (the string to replace IN_From IN_To)
+	int len_front; // distance between IN_From and end of last IN_From
+	int count;    // number of replacements
+
+	// sanity checks and initialization
+	if (!IN_String || !IN_From) return NULL;
+	len_rep = strlen(IN_From);
+
+	if (len_rep == 0)
+		return NULL; // empty IN_From causes infinite loop during count
+	if (!IN_To) IN_To = "";
+	len_with = strlen(IN_To);
+
+	// count the number of replacements needed
+	ins = IN_String;
+	for (count = 0; (tmp = strstr(ins, IN_From)); ++count) {
+		ins = tmp + len_rep;
+	}
+
+	tmp = result = malloc(strlen(IN_String) + (len_with - len_rep) * count + 1);
+
+	if (!result)
+		return NULL;
+
+	// first time through the loop, all the variable are set correctly
+	// from here on,
+	//    tmp points to the end of the result string
+	//    ins points to the next occurrence of IN_From in IN_String
+	//    IN_String points to the remainder of IN_String after "end of IN_From"
+	while (count--) {
+		ins = strstr(IN_String, IN_From);
+		len_front = ins - IN_String;
+		tmp = strncpy(tmp, IN_String, len_front) + len_front;
+		tmp = strcpy(tmp, IN_To) + len_with;
+		IN_String += len_front + len_rep; // move to next "end of IN_From"
+	}
+	strcpy(tmp, IN_String);
+	return result;
+}
+char* DSON_RemoveSpace(char* IN_String) { return DSON_ReplaceString(" ","&#32;", IN_String); }
+char* DSON_AddSpace(char* IN_String) { return DSON_ReplaceString("&#32;", " ", IN_String); }
+
 
 char* DSON_IntToString(long long IN_Value) {
 	char* Buffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
@@ -509,7 +564,9 @@ void DSON_Node_Print(DSON_Node* IN_Node) {
 	char* Indent = DSON_CreateUniformString(' ', (IN_Node->Level * DSON_STR_INDENT_SIZE));
 
 	if (DSON_Node_isValue(IN_Node)) {
-		printf("%s%s = [ %s ]\n", Indent, IN_Node->Name, IN_Node->Value);
+		char* Temp = DSON_AddSpace(IN_Node->Value);
+		printf("%s%s = [ %s ]\n", Indent, IN_Node->Name, Temp);
+		free(Temp);
 		return;
 	}
 	else if (DSON_Node_isGroup(IN_Node)) {
@@ -603,6 +660,9 @@ bool DSON_Node_AddValueString(DSON_Node* IN_Node, char* IN_Key, char* IN_Value, 
 
 	bool Result = false;
 	DSON_StringList List = DSON_SplitString(IN_Key, '/');
+
+	// Remove space from IN_Value (if any)
+	IN_Value = DSON_RemoveSpace(IN_Value);
 
 	if (List.Num == 1) {
 		size_t Index = DSON_Node_GetKeyIndex(IN_Node, IN_Key);
@@ -741,7 +801,7 @@ char* DSON_Node_GetValueString(DSON_Node* IN_Node, char* IN_Key) {
 
 	if (List.Num == 1) {
 		if (DSON_Node_isValue(Target)) {
-			return DSON_CopyString(Target->Value);
+			return DSON_AddSpace(Target->Value);
 		}
 		if (DSON_Node_isGroup(Target)) {
 			return DSON_CopyString(DSON_STR_GROUP);
