@@ -114,7 +114,12 @@ extern "C" {
 	DSON_Node* DSON_CreateEmptyNode();
 	void DSON_FreeNode(DSON_Node* IN_Node);
 	void DSON_Node_Print(DSON_Node* IN_Node);
+	void DSON_Node_PrintCompact(DSON_Node* IN_Node);
+	void DSON_Node_PrintBinary(DSON_Node* IN_Node);
 	char* DSON_Node_ToString(DSON_Node* IN_Node);
+	char* DSON_Node_ToCompactString(DSON_Node* IN_Node);
+	char* DSON_Node_ToBinaryString(DSON_Node* IN_Node);
+	int DSON_Node_Count(DSON_Node* IN_Node);
 	void DSON_Node_AddChild(DSON_Node* IN_Parent, DSON_Node* IN_Child);
 	bool DSON_Node_AddValueString(DSON_Node* IN_Node, char* IN_Key, char* IN_Value, bool IN_isAllowOverride);
 	bool DSON_Node_AddValueInt(DSON_Node* IN_Node, char* IN_Key, long long IN_Value, bool IN_isAllowOverride);
@@ -349,10 +354,9 @@ extern "C" {
 		if (!IN_String || !IN_From) return NULL;
 		len_rep = strlen(IN_From);
 
-		if (len_rep == 0)
-			return NULL; // empty IN_From causes infinite loop during count
-			if (!IN_To) IN_To = "";
-			len_with = strlen(IN_To);
+		if (len_rep == 0) return NULL; // empty IN_From causes infinite loop during count
+		if (!IN_To) IN_To = "";
+		len_with = strlen(IN_To);
 
 		// count the number of replacements needed
 		ins = IN_String;
@@ -604,6 +608,34 @@ extern "C" {
 		free(Indent);
 		return;
 	}
+	void DSON_Node_PrintCompact(DSON_Node* IN_Node) {
+		if (IN_Node == NULL) { return; }
+		if (DSON_Node_isValue(IN_Node)) {
+			char* Temp = DSON_AddSpace(IN_Node->Value);
+			printf(" %s = [ %s ]", IN_Node->Name, Temp);
+			free(Temp);
+		}
+		else if (DSON_Node_isGroup(IN_Node)) {
+			printf(" %s = { ", IN_Node->Name);
+			for (size_t X = 0; X < IN_Node->Childs->Num; X++) {
+				DSON_Node_PrintCompact(IN_Node->Childs->Entries[X]);
+			}
+			printf(" }");
+		}
+		else if (DSON_Node_isEmpty(IN_Node)) {
+			printf(" %s = #EMPTY", IN_Node->Name);
+		}
+		else {
+			// UNREACHABLE
+		}
+		if (IN_Node->Level == 0) { printf("\n"); }
+		return;
+	}
+	void DSON_Node_PrintBinary(DSON_Node* IN_Node) {
+		char* Temp = DSON_Node_ToBinaryString(IN_Node);
+		printf("%s\n",Temp);
+		free(Temp);
+	}
 	char* DSON_Node_ToString(DSON_Node* IN_Node) {
 		if (IN_Node == NULL) { return NULL; }
 		char* Indent = DSON_CreateUniformString(' ', (IN_Node->Level * DSON_STR_INDENT_SIZE));
@@ -665,6 +697,53 @@ extern "C" {
 			// UNREACHABLE
 			return NULL;
 		}
+	}
+	char* DSON_Node_ToBinaryString(DSON_Node* IN_Node) {
+		const char Lookup[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' };
+		char* Temp = DSON_Node_ToCompactString(IN_Node);
+		size_t Len = strlen(Temp);
+		size_t BuffPos = 0;
+		size_t BuffRemain = Len * 3;
+		char* FinalBuffer = malloc(sizeof(char) * BuffRemain);
+
+		char* Buffer_A = malloc(sizeof(char) * 2);
+		char* Buffer_B = malloc(sizeof(char) * 2);
+		Buffer_A[0] = 0;
+		Buffer_A[1] = 0;
+		Buffer_B[0] = 0;
+		Buffer_B[1] = 0;
+
+		for (size_t X = 0; X < Len; X++) {
+			unsigned char L = Temp[X] & 0b00001111;
+			unsigned char H = Temp[X] >> 4;
+			Buffer_A[0] = Lookup[H];
+			Buffer_B[0] = Lookup[L];
+			//printf("%s%s ", Buffer_A, Buffer_B);
+			snprintf(&FinalBuffer[BuffPos], BuffRemain,"%s%s", Buffer_A, Buffer_B);
+			BuffPos += 2;
+			BuffRemain -= 2;
+		}
+
+		free(Buffer_A);
+		free(Buffer_B);
+		return FinalBuffer;
+	}
+	int DSON_Node_Count(DSON_Node* IN_Node) {
+		int Result = 0;
+
+		if (IN_Node != NULL) {
+			if (IN_Node->Childs != NULL) {
+				int Temp = IN_Node->Childs->Num;
+				Result += Temp;
+				if (Temp > 0) {
+					for (int X = 0; X < Temp; X++) {
+						Result += DSON_Node_Count(IN_Node->Childs->Entries[X]);
+					}
+				}
+			}
+		}
+
+		return Result;
 	}
 	void DSON_Node_AddChild(DSON_Node* IN_Parent, DSON_Node* IN_Child) {
 		DSON_LogDebug("Adding [%s] as a child to [%s]", IN_Child->Name, IN_Parent->Name);
@@ -1244,7 +1323,7 @@ extern "C" {
 		return true;
 	}
 	bool DSON_SaveToBinaryFile(DSON_Node* IN_Node, char* IN_FileName) {
-		char* String = DSON_Node_ToCompactString(IN_Node);
+		char* String = DSON_Node_ToBinaryString(IN_Node);
 
 		FILE* FilePointer;
 		FilePointer = fopen(IN_FileName, "wb");
