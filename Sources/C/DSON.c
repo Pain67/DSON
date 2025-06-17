@@ -59,7 +59,8 @@ typedef enum {
 	DSON_TOKEN_OPEN_B,
 	DSON_TOKEN_OPEN_C,
 	DSON_TOKEN_CLOSE_B,
-	DSON_TOKEN_CLOSE_C
+	DSON_TOKEN_CLOSE_C,
+	DSON_TOKEN_COMMENT
 } DSON_Token_Type;
 
 
@@ -914,6 +915,7 @@ DSON_Token_Type DSON_GetTokenType(char* IN_Token) {
 		if (IN_Token[0] == ']') { return DSON_TOKEN_CLOSE_B; }
 		if (IN_Token[0] == '{') { return DSON_TOKEN_OPEN_C; }
 		if (IN_Token[0] == '}') { return DSON_TOKEN_CLOSE_C; }
+		if (IN_Token[0] == '#') { return DSON_TOKEN_COMMENT; }
 	}
 
 	return DSON_TOKEN_LITERAL;
@@ -929,6 +931,7 @@ DSON_Node* DSON_ParseLine(DSON_Node* IN_RootNode, DSON_Node* IN_CurrNode,int IN_
 	//	2 - '[' or '{'
 	//	3 - Literal Value
 	//	4 - ']'
+	//	5 - '#' Comment line, rest of the line is ignored
 	unsigned char State = 0;
 
 	if (IN_Line == NULL) { return IN_CurrNode; }	// Skipp Null Line
@@ -939,6 +942,11 @@ DSON_Node* DSON_ParseLine(DSON_Node* IN_RootNode, DSON_Node* IN_CurrNode,int IN_
 	DSON_StringList Tokens = DSON_SplitString(IN_Line, ' ');
 	for (size_t X = 0; X < Tokens.Num; X++) {
 		DSON_Token_Type Type = DSON_GetTokenType(Tokens.Entries[X]);
+
+		if (Type == DSON_TOKEN_COMMENT) {
+			// ignore rest of the line == break out of for loop
+			break;
+		}
 
 		if (State == 0) {
 			if (Type == DSON_TOKEN_CLOSE_C && IN_CurrNode != IN_RootNode) {
