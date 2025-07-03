@@ -9,7 +9,7 @@ extern "C" {
 
 	char* DSON_CreateUniformString(char IN_Char, size_t IN_Num) {
 		// +1 for the terminateing 0
-		char* Result = malloc(sizeof(char) * (IN_Num + 1));
+		char* Result = (char*)malloc(sizeof(char) * (IN_Num + 1));
 
 		for (size_t X = 0; X < IN_Num; X++) { Result[X] = IN_Char; }
 		Result[IN_Num] = 0;
@@ -67,11 +67,11 @@ extern "C" {
 		Result.Num ++;
 
 		// Allocate Space for Result Array
-		Result.Entries = malloc(sizeof(char*) * Result.Num);
-		Result.Offsets = malloc(sizeof(int) * Result.Num);
+		Result.Entries = (char**)malloc(sizeof(char*) * Result.Num);
+		Result.Offsets = (int*)malloc(sizeof(int) * Result.Num);
 
 		// Allocate Space for Buffer
-		Buffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+		Buffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
 		memset(Buffer, 0, DSON_STRING_BUFFER_SIZE);
 
 		// Building Result Array
@@ -79,7 +79,7 @@ extern "C" {
 			if (IN_String[X] == IN_Delimiter) {
 				if (BufferIndex > 0) {
 					// BufferIndex + 1 to make space for terminating 0
-					Result.Entries[ResultIndex] = malloc(sizeof(char) * (BufferIndex + 1));
+					Result.Entries[ResultIndex] = (char*)malloc(sizeof(char) * (BufferIndex + 1));
 					strcpy(Result.Entries[ResultIndex], Buffer);
 					Result.Offsets[ResultIndex] = CharNum;
 					ResultIndex++;
@@ -97,7 +97,7 @@ extern "C" {
 		// Add last Element if Exist
 		if (BufferIndex > 0) {
 			// BufferIndex + 1 to make space for terminating 0
-			Result.Entries[ResultIndex] = malloc(sizeof(char) * (BufferIndex + 1));
+			Result.Entries[ResultIndex] = (char*)malloc(sizeof(char) * (BufferIndex + 1));
 			strcpy(Result.Entries[ResultIndex], Buffer);
 			Result.Offsets[ResultIndex] = CharNum;
 			ResultIndex++;
@@ -117,7 +117,7 @@ extern "C" {
 		char* Result = 0;
 		size_t BufferIndex = 0;
 
-		Buffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+		Buffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
 		memset(Buffer,0,DSON_STRING_BUFFER_SIZE);
 
 		size_t From = 0;
@@ -135,7 +135,7 @@ extern "C" {
 			BufferIndex += TokenLen;
 		}
 
-		Result = malloc(sizeof(char) * BufferIndex);
+		Result = (char*)malloc(sizeof(char) * BufferIndex);
 		strcpy(Result, Buffer);
 		free(Buffer);
 
@@ -146,18 +146,18 @@ extern "C" {
 		size_t Len = strlen(IN_String);
 
 		if (Len == 0) {
-			char* Result = malloc(sizeof(char));
+			char* Result = (char*)malloc(sizeof(char));
 			Result[0] = 0;
 			return Result;
 		}
 		else {
-			char* Result = malloc(sizeof(char) * (Len + 1));
+			char* Result = (char*)malloc(sizeof(char) * (Len + 1));
 			strcpy(Result, IN_String);
 			return Result;
 		}
 	}
 	char* DSON_MakeString(char* IN_Format, ...) {
-		char* TempBuffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+		char* TempBuffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
 		memset(TempBuffer, 0, DSON_STRING_BUFFER_SIZE);
 
 		va_list Args;
@@ -168,7 +168,7 @@ extern "C" {
 		// For the terminateing 0;
 		Size++;
 
-		char* Result = malloc(sizeof(char) * Size);
+		char* Result = (char*)malloc(sizeof(char) * Size);
 		memset(Result, 0, Size);
 
 		strcpy(Result, TempBuffer);
@@ -205,7 +205,7 @@ extern "C" {
 			ins = tmp + len_rep;
 		}
 
-		tmp = result = malloc(strlen(IN_String) + (len_with - len_rep) * count + 1);
+		tmp = result = (char*)malloc(strlen(IN_String) + (len_with - len_rep) * count + 1);
 
 		if (!result)
 			return NULL;
@@ -230,13 +230,13 @@ extern "C" {
 
 
 	char* DSON_IntToString(long long IN_Value) {
-		char* Buffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+		char* Buffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
 		char* Result = NULL;
 
 		size_t CharNum = sprintf(Buffer,"%lld", IN_Value);
 
 		// +1 as charnum returned from sprintf not include the terminating 0
-		Result = malloc(sizeof(char) * (CharNum + 1));
+		Result = (char*)malloc(sizeof(char) * (CharNum + 1));
 
 		strcpy(Result, Buffer);
 		free(Buffer);
@@ -244,13 +244,13 @@ extern "C" {
 		return Result;
 	}
 	char* DSON_UIntToString(unsigned long long IN_Value) {
-		char* Buffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+		char* Buffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
 		char* Result = NULL;
 
 		size_t CharNum = sprintf(Buffer,"%llu", IN_Value);
 
 		// +1 as charnum returned from sprintf not include the terminating 0
-		Result = malloc(sizeof(char) * (CharNum + 1));
+		Result = (char*)malloc(sizeof(char) * (CharNum + 1));
 
 		strcpy(Result, Buffer);
 		free(Buffer);
@@ -258,13 +258,13 @@ extern "C" {
 		return Result;
 	}
 	char* DSON_FloatToString(float IN_Value) {
-		char* Buffer = malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+		char* Buffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
 		char* Result = NULL;
 
 		size_t CharNum = sprintf(Buffer,"%f", IN_Value);
 
 		// +1 as charnum returned from sprintf not include the terminating 0
-		Result = malloc(sizeof(char) * (CharNum + 1));
+		Result = (char*)malloc(sizeof(char) * (CharNum + 1));
 
 		strcpy(Result, Buffer);
 		free(Buffer);
@@ -274,8 +274,8 @@ extern "C" {
 
 
 	void DSON_Log(int IN_LogLevel, char* IN_Format, va_list IN_Args) {
-		char* Buffer = malloc(sizeof(char) * 1024);
-		char* LogType = malloc(sizeof(char) * 10);
+		char* Buffer = (char*)malloc(sizeof(char) * 1024);
+		char* LogType = (char*)malloc(sizeof(char) * 10);
 		switch(IN_LogLevel) {
 			case 0: strcpy(LogType, "DEBUG"); break;
 			case 1: strcpy(LogType, "INFO"); break;
@@ -324,7 +324,7 @@ extern "C" {
 	// DSON List Function
 
 	DSON_StringList* DSON_CreateEmptyStringList() {
-		DSON_StringList* NewList = malloc(sizeof(DSON_StringList));
+		DSON_StringList* NewList = (DSON_StringList*)malloc(sizeof(DSON_StringList));
 
 		NewList->Entries = NULL;
 		NewList->Num = 0;
@@ -333,7 +333,7 @@ extern "C" {
 	}
 
 	DSON_NodeList* DSON_CreateEmptyNodeList() {
-		DSON_NodeList* NewList = malloc(sizeof(DSON_NodeList));
+		DSON_NodeList* NewList = (DSON_NodeList*)malloc(sizeof(DSON_NodeList));
 
 		NewList->Entries = NULL;
 		NewList->Num = 0;
@@ -348,7 +348,7 @@ extern "C" {
 		DSON_NodeList* NewList = DSON_CreateEmptyNodeList();
 
 		// Allocate Element
-		NewList->Entries = malloc(sizeof(DSON_Node*) * IN_NewSize);
+		NewList->Entries = (DSON_Node**)malloc(sizeof(DSON_Node*) * IN_NewSize);
 		NewList->Num = IN_NewSize;
 
 		if (IN_List->Num < IN_NewSize) {
@@ -400,7 +400,7 @@ extern "C" {
 	}
 
 	DSON_Node* DSON_CreateEmptyNode() {
-		DSON_Node* NewNode = malloc(sizeof(DSON_Node));
+		DSON_Node* NewNode = (DSON_Node*)malloc(sizeof(DSON_Node));
 
 		NewNode->Name = NULL;
 		NewNode->Value = NULL;
@@ -546,10 +546,10 @@ extern "C" {
 		size_t Len = strlen(Temp);
 		size_t BuffPos = 0;
 		size_t BuffRemain = Len * 3;
-		char* FinalBuffer = malloc(sizeof(char) * BuffRemain);
+		char* FinalBuffer = (char*)malloc(sizeof(char) * BuffRemain);
 
-		char* Buffer_A = malloc(sizeof(char) * 2);
-		char* Buffer_B = malloc(sizeof(char) * 2);
+		char* Buffer_A = (char*)malloc(sizeof(char) * 2);
+		char* Buffer_B = (char*)malloc(sizeof(char) * 2);
 		Buffer_A[0] = 0;
 		Buffer_A[1] = 0;
 		Buffer_B[0] = 0;
@@ -616,7 +616,7 @@ extern "C" {
 				if (IN_isAllowOverride == true) {
 					if (DSON_Node_isGroup(IN_Node->Childs->Entries[Index]) == false) {
 						char* Temp = IN_Node->Childs->Entries[Index]->Value;
-						IN_Node->Childs->Entries[Index]->Value = malloc(sizeof(char) * (strlen(IN_Value) + 1));
+						IN_Node->Childs->Entries[Index]->Value = (char*)malloc(sizeof(char) * (strlen(IN_Value) + 1));
 						strcpy(IN_Node->Childs->Entries[Index]->Value, IN_Value);
 						Result =  true;
 						DSON_LogWarning(
@@ -643,11 +643,11 @@ extern "C" {
 			DSON_Node_AddChild(IN_Node, NewNode);
 
 			// +1 as length from strlen will not include the null termination char
-			NewNode->Name = malloc(sizeof(char) * (strlen(IN_Key) + 1));
+			NewNode->Name = (char*)malloc(sizeof(char) * (strlen(IN_Key) + 1));
 			strcpy(NewNode->Name, IN_Key);
 
 			// +1 as length from strlen will not include the null termination char
-			NewNode->Value = malloc(sizeof(char) * (strlen(IN_Value) + 1));
+			NewNode->Value = (char*)malloc(sizeof(char) * (strlen(IN_Value) + 1));
 			strcpy(NewNode->Value, IN_Value);
 			Result = true;
 		}
@@ -683,7 +683,7 @@ extern "C" {
 			DSON_Node* NewNode = DSON_CreateEmptyNode();
 			DSON_Node_AddChild(IN_Node, NewNode);
 			// +1 as length from strlen will not include the null termination char
-			NewNode->Name = malloc(sizeof(char) * (strlen(List.Entries[0]) + 1));
+			NewNode->Name = (char*)malloc(sizeof(char) * (strlen(List.Entries[0]) + 1));
 			strcpy(NewNode->Name, List.Entries[0]);
 
 			char* NewKey = DSON_MergeString(&List, '/', true);
@@ -1097,7 +1097,7 @@ extern "C" {
 
 		int LineNum = 1;
 		DSON_Node* Root = DSON_CreateEmptyNode();
-		Root->Name = malloc(sizeof(char) * 5);
+		Root->Name = (char*)malloc(sizeof(char) * 5);
 		memset(Root->Name, 0, 5);
 		strcpy(Root->Name, "Root");
 		DSON_Node* CurrNode = Root;
