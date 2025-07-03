@@ -1,7 +1,6 @@
 #include <stdio.h>
 
-#define DSON_IMPLEMENTATION
-#include "../../Sources/C/DSON.c"
+#include "../../Sources/C/DSON.h"
 
 int main(int argc, char** argv) {
     printf("\n");
