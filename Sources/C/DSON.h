@@ -19,9 +19,6 @@
 #define DSON_LOG_LEVEL_WARNING	2
 #define DSON_LOG_LEVEL_ERROR	3
 
-#define DSON_IMPLEMENTATION
-#define DSON_DEVELOPMENT
-
 #define DSON_STR_GROUP "{#GROUP}"
 #define DSON_STR_EMPTY "{#EMPTY}"
 #define DSON_STR_NULL "{#NULL}"
@@ -69,7 +66,7 @@ typedef enum {
 
 // ----------------------------------------------------------------------
 // Util Functions
-#ifdef cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -142,6 +139,6 @@ extern "C" {
     bool DSON_SaveToCompactTextFile(DSON_Node* IN_Node, char* IN_FileName);
     bool DSON_SaveToBinaryFile(DSON_Node* IN_Node, char* IN_FileName);
 
-#ifdef cplusplus
+#ifdef __cplusplus
 }
 #endif
