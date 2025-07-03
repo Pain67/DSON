@@ -1,0 +1,16 @@
+name = [ John&#32;Doe ] age = [ 30 ]
+address = {
+    street = [ 123_Main_St ] city = [ Springfield ] state = [ IL ] zip = [ 62704 ]
+}
+contacts = {
+    phone = [ 555-1234 ] email = [ john.doe@example.com ]
+    social = { twitter = [ @johndoe ] linkedin = [ /in/johndoe ] }
+}
+bio = {
+    hobbies = {
+        Count = [ 2 ]
+        0 = [ reading ]
+        1 = [ hiking ]
+    }
+    profession = [ Software_Engineer ]
+}
