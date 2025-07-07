@@ -30,6 +30,14 @@ bool Node::AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride)
     return DSON_Node_AddValueFloat(RawNode, &IN_Key[0], IN_Value, IN_isAllowOverride);
 }
 
+bool Node::AddEmptyGroup(std::string IN_GroupName) {
+    DSON_Node* Temp = DSON_CreateEmptyNode();
+    Temp->Name = (char*)malloc(sizeof(char) * (IN_GroupName.length() + 1));
+    strcpy(Temp->Name, IN_GroupName.c_str());
+    DSON_Node_AddChild(RawNode, Temp);
+    return true;
+}
+
 bool Node::GetValue(std::string IN_Key, std::string& OUT_Value) {
     char* Result = DSON_Node_GetValueString(RawNode, &IN_Key[0]);
     if (!Result) { return false; }

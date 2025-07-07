@@ -24,6 +24,8 @@ namespace DSON {
         bool AddValue(std::string IN_Key, unsigned long long IN_Value, bool IN_isAllowOverride);
         bool AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride);
 
+        bool AddEmptyGroup(std::string IN_GroupName);
+
         bool GetValue(std::string IN_Key, std::string& OUT_Value);
         bool GetValue(std::string IN_Key, long long& OUT_Value);
         bool GetValue(std::string IN_Key, unsigned long long& OUT_Value);
