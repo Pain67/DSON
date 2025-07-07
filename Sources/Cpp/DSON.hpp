@@ -19,10 +19,10 @@ namespace DSON {
 
         void AddChild(Node& REF_Node);
 
-        bool AddValue(std::string IN_Key, std::string IN_Value, bool IN_isAllowOverride);
-        bool AddValue(std::string IN_Key, long long IN_Value, bool IN_isAllowOverride);
-        bool AddValue(std::string IN_Key, unsigned long long IN_Value, bool IN_isAllowOverride);
-        bool AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride);
+        bool AddValue(std::string IN_Key, std::string IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, long long IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, unsigned long long IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride = false);
 
         bool AddEmptyGroup(std::string IN_GroupName);
 
