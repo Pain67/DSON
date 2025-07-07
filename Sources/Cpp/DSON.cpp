@@ -104,6 +104,9 @@ Node Node::ParseFromTextFile(std::string IN_FileName) {
 Node Node::ParseFromString(std::string IN_String) {
     return(Node(DSON_ParseString(&IN_String[0])));
 }
+Node Node::CreateEmptyNode() {
+    return Node(DSON_CreateEmptyNode());
+}
 
 // ----------------------------------------------------------------------------
 //

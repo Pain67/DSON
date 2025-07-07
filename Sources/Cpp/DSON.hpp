@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../C/DSON.h"
+#include "DSON.h"
 
 
 namespace DSON {
@@ -52,5 +52,6 @@ namespace DSON {
 
         static Node ParseFromTextFile(std::string IN_FileName);
         static Node ParseFromString(std::string IN_String);
+        static Node CreateEmptyNode();
     };
 }
