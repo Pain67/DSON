@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 #include "DSON.h"
 
 
@@ -20,15 +21,27 @@ namespace DSON {
         void AddChild(Node& REF_Node);
 
         bool AddValue(std::string IN_Key, std::string IN_Value, bool IN_isAllowOverride = false);
-        bool AddValue(std::string IN_Key, long long IN_Value, bool IN_isAllowOverride = false);
-        bool AddValue(std::string IN_Key, unsigned long long IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, int8_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, int16_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, int32_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, int64_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, uint8_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, uint16_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, uint32_t IN_Value, bool IN_isAllowOverride = false);
+        bool AddValue(std::string IN_Key, uint64_t IN_Value, bool IN_isAllowOverride = false);
         bool AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride = false);
 
         bool AddEmptyGroup(std::string IN_GroupName);
 
         bool GetValue(std::string IN_Key, std::string& OUT_Value);
-        bool GetValue(std::string IN_Key, long long& OUT_Value);
-        bool GetValue(std::string IN_Key, unsigned long long& OUT_Value);
+        bool GetValue(std::string IN_Key, int8_t& OUT_Value);
+        bool GetValue(std::string IN_Key, int16_t& OUT_Value);
+        bool GetValue(std::string IN_Key, int32_t& OUT_Value);
+        bool GetValue(std::string IN_Key, int64_t& OUT_Value);
+        bool GetValue(std::string IN_Key, uint8_t& OUT_Value);
+        bool GetValue(std::string IN_Key, uint16_t& OUT_Value);
+        bool GetValue(std::string IN_Key, uint32_t& OUT_Value);
+        bool GetValue(std::string IN_Key, uint64_t& OUT_Value);
         bool GetValue(std::string IN_Key, float& OUT_Value);
 
         bool Remove(std::string IN_Key);

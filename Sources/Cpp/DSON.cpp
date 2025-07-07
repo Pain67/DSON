@@ -17,14 +17,33 @@ void Node::AddChild(Node& REF_Node) {
     DSON_Node_AddChild(RawNode, REF_Node.GetRawNode());
 }
 
+
 bool Node::AddValue(std::string IN_Key, std::string IN_Value, bool IN_isAllowOverride) {
     return DSON_Node_AddValueString(RawNode, &IN_Key[0], &IN_Value[0], IN_isAllowOverride);
 }
-bool Node::AddValue(std::string IN_Key, long long IN_Value, bool IN_isAllowOverride) {
-    return DSON_Node_AddValueInt(RawNode, &IN_Key[0], IN_Value, IN_isAllowOverride);
+bool Node::AddValue(std::string IN_Key, int8_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueInt(RawNode, &IN_Key[0], (long long)IN_Value, IN_isAllowOverride);
 }
-bool Node::AddValue(std::string IN_Key, unsigned long long IN_Value, bool IN_isAllowOverride) {
-    return DSON_Node_AddValueUInt(RawNode, &IN_Key[0], IN_Value, IN_isAllowOverride);
+bool Node::AddValue(std::string IN_Key, int16_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueInt(RawNode, &IN_Key[0], (long long)IN_Value, IN_isAllowOverride);
+}
+bool Node::AddValue(std::string IN_Key, int32_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueInt(RawNode, &IN_Key[0], (long long)IN_Value, IN_isAllowOverride);
+}
+bool Node::AddValue(std::string IN_Key, int64_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueInt(RawNode, &IN_Key[0], (long long)IN_Value, IN_isAllowOverride);
+}
+bool Node::AddValue(std::string IN_Key, uint8_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueUInt(RawNode, &IN_Key[0], (unsigned long long)IN_Value, IN_isAllowOverride);
+}
+bool Node::AddValue(std::string IN_Key, uint16_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueUInt(RawNode, &IN_Key[0], (unsigned long long)IN_Value, IN_isAllowOverride);
+}
+bool Node::AddValue(std::string IN_Key, uint32_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueUInt(RawNode, &IN_Key[0], (unsigned long long)IN_Value, IN_isAllowOverride);
+}
+bool Node::AddValue(std::string IN_Key, uint64_t IN_Value, bool IN_isAllowOverride) {
+    return DSON_Node_AddValueUInt(RawNode, &IN_Key[0], (unsigned long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride) {
     return DSON_Node_AddValueFloat(RawNode, &IN_Key[0], IN_Value, IN_isAllowOverride);
@@ -47,11 +66,53 @@ bool Node::GetValue(std::string IN_Key, std::string& OUT_Value) {
 
     return true;
 }
-bool Node::GetValue(std::string IN_Key, long long& OUT_Value) {
-    return DSON_Node_GetValueInt(RawNode, &IN_Key[0], &OUT_Value);
+bool Node::GetValue(std::string IN_Key, int8_t& OUT_Value) {
+    long long Temp = 0;
+    bool Result = DSON_Node_GetValueInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
 }
-bool Node::GetValue(std::string IN_Key, unsigned long long& OUT_Value) {
-    return DSON_Node_GetValueUInt(RawNode, &IN_Key[0], &OUT_Value);
+bool Node::GetValue(std::string IN_Key, int16_t& OUT_Value) {
+    long long Temp = 0;
+    bool Result = DSON_Node_GetValueInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
+}
+bool Node::GetValue(std::string IN_Key, int32_t& OUT_Value) {
+    long long Temp = 0;
+    bool Result = DSON_Node_GetValueInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
+}
+bool Node::GetValue(std::string IN_Key, int64_t& OUT_Value) {
+    long long Temp = 0;
+    bool Result = DSON_Node_GetValueInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
+}
+bool Node::GetValue(std::string IN_Key, uint8_t& OUT_Value) {
+    unsigned long long Temp = 0;
+    bool Result = DSON_Node_GetValueUInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
+}
+bool Node::GetValue(std::string IN_Key, uint16_t& OUT_Value) {
+    unsigned long long Temp = 0;
+    bool Result = DSON_Node_GetValueUInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
+}
+bool Node::GetValue(std::string IN_Key, uint32_t& OUT_Value) {
+    unsigned long long Temp = 0;
+    bool Result = DSON_Node_GetValueUInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
+}
+bool Node::GetValue(std::string IN_Key, uint64_t& OUT_Value) {
+    unsigned long long Temp = 0;
+    bool Result = DSON_Node_GetValueUInt(RawNode, &IN_Key[0], &Temp);
+    OUT_Value = Temp;
+    return Result;
 }
 bool Node::GetValue(std::string IN_Key, float& OUT_Value) {
     return DSON_Node_GetValueFloat(RawNode, &IN_Key[0], &OUT_Value);
