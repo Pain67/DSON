@@ -60,6 +60,10 @@ typedef enum {
     DSON_TOKEN_COMMENT
 } DSON_Token_Type;
 
+typedef void(*DSON_LogFunction)(int, char*);
+
+DSON_LogFunction DSON_LogCallback = NULL;
+int DSON_MinLogLevel = 0;
 
 // ------------------------------------------------------------------------------------------------
 // Headers

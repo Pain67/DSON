@@ -276,7 +276,17 @@ char* DSON_FloatToString(float IN_Value) {
 
 
 void DSON_Log(int IN_LogLevel, char* IN_Format, va_list IN_Args) {
+	if (IN_LogLevel < DSON_MinLogLevel) { return; }
+
 	char* Buffer = (char*)malloc(sizeof(char) * 1024);
+	vsnprintf(Buffer, 1024, IN_Format, IN_Args);
+
+	if (DSON_LogCallback != NULL) {
+		DSON_LogCallback(IN_LogLevel, Buffer);
+		free(Buffer);
+		return;
+	}
+
 	char* LogType = (char*)malloc(sizeof(char) * 10);
 	switch(IN_LogLevel) {
 		case 0: strcpy(LogType, "DEBUG"); break;
@@ -285,11 +295,7 @@ void DSON_Log(int IN_LogLevel, char* IN_Format, va_list IN_Args) {
 		case 3: strcpy(LogType, "ERROR"); break;
 		default: strcpy(LogType, "UNDEFINED"); break;
 	}
-
-	sprintf(Buffer, "[%s] => %s\n", LogType, IN_Format);
-	vprintf(Buffer, IN_Args);
-	fflush(stdout);
-
+	printf("[%s] => %s\n", LogType, Buffer);
 	free(Buffer);
 	free(LogType);
 }
@@ -1191,4 +1197,3 @@ bool DSON_SaveToBinaryFile(DSON_Node* IN_Node, char* IN_FileName) {
 	if (String != NULL) { free(String); }
 	return true;
 }
-
