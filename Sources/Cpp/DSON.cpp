@@ -338,6 +338,43 @@ void Node::SetBasePath(std::string IN_BasePath) {
     DSON_FreeStringList(&TempList);
     free(Buffer);
 }
+void Node::AddBasePath(std::string IN_Path) {
+    if (IN_Path.length() == 0) { return; }
+
+    char* Buffer = (char*)malloc(sizeof(char) * (IN_Path.length() + 1));
+    strcpy(Buffer, IN_Path.c_str());
+    DSON_StringList TempList = DSON_SplitString(Buffer, '/');
+    size_t Num = TempList.Num;
+    if (Num > 0) {
+        for (size_t X = 0; X < Num; X++) {
+            std::string Temp(TempList.Entries[X]);
+            BasePath.push_back(Temp);
+        }
+    }
+
+    DSON_FreeStringList(&TempList);
+    free(Buffer);
+}
+void Node::BasePathUp(int IN_Num) {
+    size_t Num = BasePath.size();
+
+    if (Num <= IN_Num) {
+        BasePath.clear();
+        return;
+    }
+
+    size_t NewSize = Num - IN_Num;
+
+    // TODO: This will need to be changed later
+    std::vector<std::string> Temp;
+    Temp.reserve(NewSize);
+    for (size_t X = 0; X < NewSize; X++) {
+        Temp.push_back(BasePath[X]);
+    }
+
+    BasePath.clear();
+    BasePath = Temp;
+}
 
 Node Node::ParseFromTextFile(std::string IN_FileName) {
     return(Node(DSON_ParseTextFile(&IN_FileName[0])));
@@ -356,9 +393,4 @@ Node Node::CreateEmptyNode() {
 // ----------------------------------------------------------------------------
 
 }
-
-
-
-
-
 
