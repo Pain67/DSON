@@ -7,6 +7,8 @@
 
 namespace DSON {
 
+    void SetLogCallbackFunction(DSON_LogFunction IN_Function);
+    void SetMinLogLevel(int IN_MinLogLevel);
 
     class Node {
     private:

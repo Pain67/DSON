@@ -5,6 +5,13 @@
 
 namespace DSON {
 
+void SetLogCallbackFunction(DSON_LogFunction IN_Function) {
+    DSON_LogCallback = IN_Function;
+}
+void SetMinLogLevel(int IN_MinLogLevel) {
+    DSON_MinLogLevel = IN_MinLogLevel;
+}
+
 // ----------------------------------------------------------------------------
 // DSON Node
 // ----------------------------------------------------------------------------
