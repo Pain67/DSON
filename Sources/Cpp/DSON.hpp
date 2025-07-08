@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include <vector>
 #include "DSON.h"
 
 
@@ -13,14 +14,13 @@ namespace DSON {
     class Node {
     private:
         DSON_Node* RawNode = nullptr;
+        std::vector<std::string> BasePath;
     protected:
 
     public:
         Node();
         Node(DSON_Node* IN_RawNode);
         ~Node();
-
-        void AddChild(Node& REF_Node);
 
         bool AddValue(std::string IN_Key, std::string IN_Value, bool IN_isAllowOverride = false);
         bool AddValue(std::string IN_Key, int8_t IN_Value, bool IN_isAllowOverride = false);
@@ -66,6 +66,9 @@ namespace DSON {
         bool GetisEmpty();
         int GetCount();
         DSON_Node* GetRawNode();
+
+        std::string GetBasePath();
+        void SetBasePath(std::string IN_BasePath);
 
         static Node ParseFromTextFile(std::string IN_FileName);
         static Node ParseFromString(std::string IN_String);
