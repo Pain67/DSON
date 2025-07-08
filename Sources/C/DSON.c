@@ -919,6 +919,46 @@ bool DSON_Node_Remove(DSON_Node* IN_Node, char* IN_Key) {
 
 	return true;
 }
+DSON_Node* DSON_GetSubNode(DSON_Node* IN_Node, char* IN_Key) {
+	if (IN_Node == NULL) {
+		DSON_LogError("Unable to Get SubNode fromNULL");
+		return NULL;
+	}
+
+	DSON_StringList List = DSON_SplitString(IN_Key, '/');
+
+	if (List.Num == 1) {
+		size_t Index = DSON_Node_GetKeyIndex(IN_Node, IN_Key);
+		if (Index == DSON_UINT_MAX) {
+			DSON_LogError(
+				"Unable to get SubNode. Key [%s] not found in Node [%s]",
+				IN_Key,
+				IN_Node->Name
+			);
+			DSON_FreeStringList(&List);
+			return NULL;
+		}
+		DSON_FreeStringList(&List);
+		return IN_Node->Childs->Entries[Index];
+	}
+	else {
+		size_t Index = DSON_Node_GetKeyIndex(IN_Node, List.Entries[0]);
+		if (Index == DSON_UINT_MAX) {
+			DSON_LogError(
+				"Unable to get SubNode. Key [%s] not found in Node [%s]",
+				 IN_Key,
+				 IN_Node->Name
+			);
+			DSON_FreeStringList(&List);
+			return NULL;
+		}
+		char* NewKey = DSON_MergeString(&List, '/', true);
+		DSON_Node* Result = DSON_GetSubNode(IN_Node->Childs->Entries[Index], NewKey);
+		free(NewKey);
+		DSON_FreeStringList(&List);
+		return Result;
+	}
+}
 
 // ----------------------------------------------------------------------
 // DSON Token

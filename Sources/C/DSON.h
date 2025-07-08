@@ -126,6 +126,7 @@ extern "C" {
     bool DSON_Node_GetValueUInt(DSON_Node* IN_Node, char* IN_Key, unsigned long long* OUT_Value);
     bool DSON_Node_GetValueFloat(DSON_Node* IN_Node, char* IN_Key, float* OUT_Value);
     bool DSON_Node_Remove(DSON_Node* IN_Node, char* IN_Key);
+    DSON_Node* DSON_GetSubNode(DSON_Node* IN_Node, char* IN_Key);
 
     // ----------------------------------------------------------------------
     // DSON Token
