@@ -67,6 +67,9 @@ typedef enum {
 
 typedef void(*DSON_LogFunction)(int, char*);
 
+extern DSON_LogFunction DSON_LogCallback;
+extern int DSON_MinLogLevel;
+
 // ------------------------------------------------------------------------------------------------
 // Headers
 
