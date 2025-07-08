@@ -3,7 +3,8 @@
 // ------------------------------------------------------------------------------------------------
 // Globals
 
-int DSON_LogLevel = DSON_LOG_LEVEL_WARNING;
+DSON_LogFunction DSON_LogCallback = NULL;
+int DSON_MinLogLevel = 0;
 
 // ----------------------------------------------------------------------
 // Util Functions
@@ -301,21 +302,21 @@ void DSON_Log(int IN_LogLevel, char* IN_Format, va_list IN_Args) {
 }
 
 void DSON_LogDebug(char* IN_Format, ...) {
-	if (DSON_LogLevel > DSON_LOG_LEVEL_DEBUG) { return; }
+	if (DSON_MinLogLevel > DSON_LOG_LEVEL_DEBUG) { return; }
 	va_list args;
 	va_start(args, IN_Format);
 	DSON_Log(DSON_LOG_LEVEL_DEBUG, IN_Format, args);
 	va_end(args);
 }
 void DSON_LogInfo(char* IN_Format, ...) {
-	if (DSON_LogLevel > DSON_LOG_LEVEL_INFO) { return; }
+	if (DSON_MinLogLevel > DSON_LOG_LEVEL_INFO) { return; }
 	va_list args;
 	va_start(args, IN_Format);
 	DSON_Log(DSON_LOG_LEVEL_INFO, IN_Format, args);
 	va_end(args);
 }
 void DSON_LogWarning(char* IN_Format, ...) {
-	if (DSON_LogLevel > DSON_LOG_LEVEL_WARNING) { return; }
+	if (DSON_MinLogLevel > DSON_LOG_LEVEL_WARNING) { return; }
 	va_list args;
 	va_start(args, IN_Format);
 	DSON_Log(DSON_LOG_LEVEL_WARNING, IN_Format, args);

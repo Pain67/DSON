@@ -7,6 +7,11 @@
 #include <math.h>
 
 // ------------------------------------------------------------------------------------------------
+// Include guard
+#ifndef DSON_HEADER
+#define DSON_HEADER
+
+// ------------------------------------------------------------------------------------------------
 // Define const values
 
 #define true 1
@@ -61,9 +66,6 @@ typedef enum {
 } DSON_Token_Type;
 
 typedef void(*DSON_LogFunction)(int, char*);
-
-DSON_LogFunction DSON_LogCallback = NULL;
-int DSON_MinLogLevel = 0;
 
 // ------------------------------------------------------------------------------------------------
 // Headers
@@ -147,3 +149,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+
+// ------------------------------------------------------------------------------------------------
+// Include guard
+#endif // DSON_HEADER
