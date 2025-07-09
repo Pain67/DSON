@@ -13,10 +13,10 @@ namespace DSON {
 
     class Node {
     private:
+
+    protected:
         DSON_Node* RawNode = nullptr;
         std::vector<std::string> BasePath;
-    protected:
-
     public:
         Node();
         Node(DSON_Node* IN_RawNode);
