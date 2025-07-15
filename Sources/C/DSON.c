@@ -401,11 +401,31 @@ size_t DSON_Node_GetKeyIndex(DSON_Node* IN_Ptr, char* IN_Key) {
 	if (IN_Ptr == NULL) { return DSON_UINT_MAX; }
 	if (IN_Ptr->Childs->Num == 0) { return DSON_UINT_MAX; }
 
-	for (size_t X = 0; X < IN_Ptr->Childs->Num; X++) {
-		if (strcmp(IN_Ptr->Childs->Entries[X]->Name, IN_Key) == 0) { return X; }
-	}
+	DSON_StringList List = DSON_SplitString(IN_Key, '/');
 
-	return DSON_UINT_MAX;
+	if (List.Num == 1) {
+		DSON_FreeStringList(&List);
+
+		for (size_t X = 0; X < IN_Ptr->Childs->Num; X++) {
+			if (strcmp(IN_Ptr->Childs->Entries[X]->Name, IN_Key) == 0) { return X; }
+		}
+
+		return DSON_UINT_MAX;
+	}
+	else {
+		size_t Index = DSON_Node_GetKeyIndex(IN_Ptr, List.Entries[0]);
+		if (Index == DSON_UINT_MAX) {
+			DSON_FreeStringList(&List);
+			return DSON_UINT_MAX;
+		}
+
+		char* NewKey = DSON_MergeString(&List,'/',true);
+		size_t Result = DSON_Node_GetKeyIndex(IN_Ptr->Childs->Entries[Index], NewKey);
+
+		free(NewKey);
+		DSON_FreeStringList(&List);
+		return Result;
+	}
 }
 
 DSON_Node* DSON_CreateEmptyNode() {
@@ -618,7 +638,8 @@ bool DSON_Node_AddValueString(DSON_Node* IN_Node, char* IN_Key, char* IN_Value, 
 
 	// Remove space from IN_Value (if any)
 	IN_Value = DSON_RemoveSpace(IN_Value);
-
+	DSON_Node* TargetNode = nullptr;
+	
 	if (List.Num == 1) {
 		size_t Index = DSON_Node_GetKeyIndex(IN_Node, IN_Key);
 		if (Index < DSON_UINT_MAX) {
@@ -649,11 +670,12 @@ bool DSON_Node_AddValueString(DSON_Node* IN_Node, char* IN_Key, char* IN_Value, 
 		}
 
 		DSON_Node* NewNode = DSON_CreateEmptyNode();
-		DSON_Node_AddChild(IN_Node, NewNode);
 
 		// +1 as length from strlen will not include the null termination char
 		NewNode->Name = (char*)malloc(sizeof(char) * (strlen(IN_Key) + 1));
 		strcpy(NewNode->Name, IN_Key);
+		
+		DSON_Node_AddChild(IN_Node, NewNode);
 
 		// +1 as length from strlen will not include the null termination char
 		NewNode->Value = (char*)malloc(sizeof(char) * (strlen(IN_Value) + 1));
@@ -673,30 +695,33 @@ bool DSON_Node_AddValueString(DSON_Node* IN_Node, char* IN_Key, char* IN_Value, 
 				Result = false;
 				goto CleanUp;
 			}
-			if (IN_isAllowOverride) {
-				char* NewKey = DSON_MergeString(&List, '/', true);
-				Result = DSON_Node_AddValueString(IN_Node->Childs->Entries[Index], NewKey, IN_Value, IN_isAllowOverride);
-				free(NewKey);
-				goto CleanUp;
-			}
-			DSON_LogError(
-				"Unable to add StringValue to [%s]. Key [%s] (from Key Chain [%s]) already exist",
-							IN_Node->Name,
-				List.Entries[0],
-				IN_Key
-			);
-			Result = false;
-			goto CleanUp;
+			TargetNode = IN_Node->Childs->Entries[Index];
+			//if (IN_isAllowOverride) {
+			//	char* NewKey = DSON_MergeString(&List, '/', true);
+			//	Result = DSON_Node_AddValueString(IN_Node->Childs->Entries[Index], NewKey, IN_Value, IN_isAllowOverride);
+			//	free(NewKey);
+			//	goto CleanUp;
+			//}
+			//DSON_LogError(
+			//	"Unable to add StringValue to [%s]. Key [%s] (from Key Chain [%s]) already exist",
+			//				IN_Node->Name,
+			//	List.Entries[0],
+			//	IN_Key
+			//);
+			//Result = false;
+			//goto CleanUp;
+		}
+		else {
+			TargetNode = DSON_CreateEmptyNode();
+			// +1 as length from strlen will not include the null termination char
+			TargetNode->Name = (char*)malloc(sizeof(char) * (strlen(List.Entries[0]) + 1));
+			strcpy(TargetNode->Name, List.Entries[0]);
+			
+			DSON_Node_AddChild(IN_Node, TargetNode);
 		}
 
-		DSON_Node* NewNode = DSON_CreateEmptyNode();
-		DSON_Node_AddChild(IN_Node, NewNode);
-		// +1 as length from strlen will not include the null termination char
-		NewNode->Name = (char*)malloc(sizeof(char) * (strlen(List.Entries[0]) + 1));
-		strcpy(NewNode->Name, List.Entries[0]);
-
 		char* NewKey = DSON_MergeString(&List, '/', true);
-		Result = DSON_Node_AddValueString(NewNode, NewKey, IN_Value, IN_isAllowOverride);
+		Result = DSON_Node_AddValueString(TargetNode, NewKey, IN_Value, IN_isAllowOverride);
 		free(NewKey);
 	}
 

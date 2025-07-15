@@ -72,6 +72,8 @@ namespace DSON {
         void AddBasePath(std::string IN_Path);
         void BasePathUp(int IN_Num);
 
+        void Deallocate();
+
         static Node ParseFromTextFile(std::string IN_FileName);
         static Node ParseFromString(std::string IN_String);
         static Node CreateEmptyNode();

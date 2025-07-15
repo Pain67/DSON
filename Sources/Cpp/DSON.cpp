@@ -18,66 +18,66 @@ void SetMinLogLevel(int IN_MinLogLevel) {
 
 Node::Node() { RawNode = DSON_CreateEmptyNode(); }
 Node::Node(DSON_Node* IN_RawNode) { RawNode = IN_RawNode; }
-Node::~Node() { if (RawNode != nullptr) { DSON_FreeNode(RawNode); } }
+Node::~Node() { /* if (RawNode != nullptr) { DSON_FreeNode(RawNode); } */ }
 
 bool Node::AddValue(std::string IN_Key, std::string IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueString(RawNode, &Path[0], &IN_Value[0], IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, int8_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueInt(RawNode, &Path[0], (long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, int16_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueInt(RawNode, &Path[0], (long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, int32_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueInt(RawNode, &Path[0], (long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, int64_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueInt(RawNode, &Path[0], (long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, uint8_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueUInt(RawNode, &Path[0], (unsigned long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, uint16_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueUInt(RawNode, &Path[0], (unsigned long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, uint32_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueUInt(RawNode, &Path[0], (unsigned long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, uint64_t IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueUInt(RawNode, &Path[0], (unsigned long long)IN_Value, IN_isAllowOverride);
 }
 bool Node::AddValue(std::string IN_Key, float IN_Value, bool IN_isAllowOverride) {
     std::string Path = GetBasePath();
     if (Path.length() > 0) { Path += "/"; }
-    Path += IN_Value;
+    Path += IN_Key;
     return DSON_Node_AddValueFloat(RawNode, &Path[0], IN_Value, IN_isAllowOverride);
 }
 
@@ -301,7 +301,9 @@ void Node::PrintCompact() { DSON_Node_PrintCompact(RawNode); }
 void Node::PrintBinary() { DSON_Node_PrintBinary(RawNode); }
 
 size_t Node::GetKeyIndex(std::string IN_Key) {
-    return DSON_Node_GetKeyIndex(RawNode, &IN_Key[0]);
+    std::string TempKey = GetBasePath();
+    if (TempKey.length() > 0) { TempKey += "/" + IN_Key; } else { TempKey = IN_Key; }
+    return DSON_Node_GetKeyIndex(RawNode, &TempKey[0]);
 }
 bool Node::GetisValue() { return DSON_Node_isValue(RawNode); }
 bool Node::GetisGroup() { return DSON_Node_isGroup(RawNode); }
@@ -374,6 +376,11 @@ void Node::BasePathUp(int IN_Num) {
 
     BasePath.clear();
     BasePath = Temp;
+}
+
+void Node::Deallocate() {
+    if (RawNode != nullptr) { DSON_FreeNode(RawNode); }
+    RawNode = nullptr;
 }
 
 Node Node::ParseFromTextFile(std::string IN_FileName) {
