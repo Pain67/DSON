@@ -470,7 +470,7 @@ void DSON_Node_Print(DSON_Node* IN_Node) {
 		printf("%s}\n", Indent);
 	}
 	else if (DSON_Node_isEmpty(IN_Node)) {
-		printf("%s%s = #EMPTY\n", Indent, IN_Node->Name);
+		printf("%s%s = [ ]\n", Indent, IN_Node->Name);
 	}
 	else {
 		// UNREACHABLE
@@ -494,7 +494,7 @@ void DSON_Node_PrintCompact(DSON_Node* IN_Node) {
 		printf(" }");
 	}
 	else if (DSON_Node_isEmpty(IN_Node)) {
-		printf(" %s = #EMPTY", IN_Node->Name);
+		printf(" %s = [ ]", IN_Node->Name);
 	}
 	else {
 		// UNREACHABLE
@@ -532,7 +532,7 @@ char* DSON_Node_ToString(DSON_Node* IN_Node) {
 		return CloseTag;
 	}
 	else if (DSON_Node_isEmpty(IN_Node)) {
-		char* Result = DSON_MakeString("%s%s = #EMPTY\n", Indent, IN_Node->Name);
+		char* Result = DSON_MakeString("%s%s = [ ]\n", Indent, IN_Node->Name);
 		free(Indent);
 		return Result;
 	}
@@ -562,7 +562,7 @@ char* DSON_Node_ToCompactString(DSON_Node* IN_Node) {
 		return CloseTag;
 	}
 	else if (DSON_Node_isEmpty(IN_Node)) {
-		return DSON_MakeString("%s = #EMPTY ", IN_Node->Name);
+		return DSON_MakeString("%s = [ ] ", IN_Node->Name);
 	}
 	else {
 		// UNREACHABLE
