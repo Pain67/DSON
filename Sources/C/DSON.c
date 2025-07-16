@@ -517,19 +517,29 @@ char* DSON_Node_ToString(DSON_Node* IN_Node) {
 		return Result;
 	}
 	else if (DSON_Node_isGroup(IN_Node)) {
-		char* Result = DSON_MakeString("%s%s = {\n", Indent, IN_Node->Name);
+		// Get the String From the childs
+		char* ChildsStr = (char*)malloc(sizeof(char));
+		ChildsStr[0] = 0;
 		for (size_t X = 0; X < IN_Node->Childs->Num; X++) {
-			char* ChildString = DSON_Node_ToString(IN_Node->Childs->Entries[X]);
-			char* TempSting = DSON_MakeString("%s%s", Result, ChildString);
-			free(Result);
-			free(ChildString);
-			Result = TempSting;
+			char* Curr = DSON_Node_ToString(IN_Node->Childs->Entries[X]);
+			char* TempSting = DSON_MakeString("%s%s", ChildsStr, Curr);
+			free(ChildsStr);
+			free(Curr);
+			ChildsStr = TempSting;
 		}
-		char* CloseTag = DSON_MakeString("%s\n%s}\n", Result, Indent);
-		free(Result);
-		free(Indent);
-
-		return CloseTag;
+		// Add Open and close tag if needed
+		if (IN_Node->Name != NULL && strcmp(IN_Node->Name,"Root") != 0) {
+			char* Open = DSON_MakeString("%s%s = {\n", Indent, IN_Node->Name);
+			char* TempString = DSON_MakeString("%s%s%s}\n", Open, ChildsStr,Indent);
+			free(Indent);
+			free(ChildsStr);
+			free(Open);
+			return TempString;
+		}
+		else {
+			free(Indent);
+			return ChildsStr;
+		}
 	}
 	else if (DSON_Node_isEmpty(IN_Node)) {
 		char* Result = DSON_MakeString("%s%s = [ ]\n", Indent, IN_Node->Name);
@@ -548,18 +558,25 @@ char* DSON_Node_ToCompactString(DSON_Node* IN_Node) {
 		return DSON_MakeString("%s = [ %s ] ", IN_Node->Name, IN_Node->Value);
 	}
 	else if (DSON_Node_isGroup(IN_Node)) {
-		char* Result = DSON_MakeString("%s = { ", IN_Node->Name);
+		// Get the String From the childs
+		char* ChildsStr = (char*)malloc(sizeof(char));
+		ChildsStr[0] = 0;
 		for (size_t X = 0; X < IN_Node->Childs->Num; X++) {
-			char* ChildString = DSON_Node_ToCompactString(IN_Node->Childs->Entries[X]);
-			char* TempSting = DSON_MakeString("%s%s", Result, ChildString);
-			free(Result);
-			free(ChildString);
-			Result = TempSting;
+			char* Curr = DSON_Node_ToCompactString(IN_Node->Childs->Entries[X]);
+			char* TempSting = DSON_MakeString("%s%s", ChildsStr, Curr);
+			free(ChildsStr);
+			free(Curr);
+			ChildsStr = TempSting;
 		}
-		char* CloseTag = DSON_MakeString("%s } ", Result);
-		free(Result);
-
-		return CloseTag;
+		// Add Open and close tag if needed
+		if (IN_Node->Name != NULL && strcmp(IN_Node->Name,"Root") != 0) {
+			char* Open = DSON_MakeString("%s = { ", IN_Node->Name);
+			char* TempString = DSON_MakeString("%s%s } ", Open, ChildsStr);
+			free(ChildsStr);
+			free(Open);
+			return TempString;
+		}
+		else { return ChildsStr; }
 	}
 	else if (DSON_Node_isEmpty(IN_Node)) {
 		return DSON_MakeString("%s = [ ] ", IN_Node->Name);
@@ -1015,7 +1032,7 @@ DSON_Node* DSON_ParseLine(DSON_Node* IN_RootNode, DSON_Node* IN_CurrNode,int IN_
 	//	0 - Literal Name (Also handles '}')
 	//	1 - '='
 	//	2 - '[' or '{'
-	//	3 - Literal Value
+	//	3 - Literal Value also handles empty groups with ']'
 	//	4 - ']'
 	//	5 - '#' Comment line, rest of the line is ignored
 	unsigned char State = 0;
@@ -1093,13 +1110,20 @@ DSON_Node* DSON_ParseLine(DSON_Node* IN_RootNode, DSON_Node* IN_CurrNode,int IN_
 		}
 		else if (State == 3) {
 			if (Type != DSON_TOKEN_LITERAL) {
-				DSON_LogError(
-					"Unexpected '%s' at line [%i:%i]. Expected a literal value.",
-				Tokens.Entries[X],
-				IN_LineNum,
-				Tokens.Offsets[X]
-				);
-				return NULL;
+				if (Type != DSON_TOKEN_CLOSE_B) {
+					DSON_LogError(
+						"Unexpected '%s' at line [%i:%i]. Expected a literal value.",
+				   Tokens.Entries[X],
+				   IN_LineNum,
+				   Tokens.Offsets[X]
+					);
+					return NULL;
+				}
+				else {
+					IN_CurrNode = IN_CurrNode->Parent;
+					State = 0;
+					continue;
+				}
 			}
 			IN_CurrNode->Value = DSON_CopyString(Tokens.Entries[X]);
 			State = 4;
