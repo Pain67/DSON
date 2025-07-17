@@ -311,6 +311,28 @@ bool Node::GetisEmpty() { return DSON_Node_isEmpty(RawNode); }
 int Node::GetCount() { return DSON_Node_Count(RawNode); }
 DSON_Node* Node::GetRawNode() { return RawNode; }
 size_t Node::GetValuesCount() { return DSON_CountValues(RawNode); }
+std::string Node::GetNodePath() {
+    char* P = DSON_GetNodePath(RawNode);
+    std::string Result(P);
+    free(P);
+    return Result;
+}
+std::vector<std::string> Node::GetKeyList() {
+    DSON_StringList List = DSON_GetKeyList(RawNode);
+    if (List.Num == 0) {
+        DSON_FreeStringList(&List);
+        return std::vector<std::string>();
+    }
+    std::vector<std::string> Result;
+
+    Result.reserve(List.Num);
+    for (size_t X = 0; X < List.Num; X++) {
+        Result.push_back(std::string(List.Entries[X]));
+    }
+
+    DSON_FreeStringList(&List);
+    return Result;
+}
 
 std::string Node::GetBasePath() {
     std::string Result;

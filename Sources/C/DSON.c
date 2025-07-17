@@ -1019,6 +1019,68 @@ size_t DSON_CountValues(DSON_Node* IN_Node) {
 
 	return Result;
 }
+char* DSON_GetNodePath(DSON_Node* IN_Node) {
+	char* Buffer = (char*)malloc(sizeof(char) * DSON_STRING_BUFFER_SIZE);
+	memset(Buffer, 0, DSON_STRING_BUFFER_SIZE);
+	size_t BufferOffset = 0;
+
+	// Add Path to Parent
+	if (IN_Node->Parent == NULL) { return NULL; }
+	char* P = DSON_GetNodePath(IN_Node->Parent);
+	if (P != NULL) {
+		size_t PLen = strlen(P);
+		memcpy(Buffer, P, PLen);
+		free(P);
+		BufferOffset += PLen;
+		Buffer[BufferOffset++] = '/';
+	}
+
+	// Add Parent Name
+	size_t PNameLen = strlen(IN_Node->Parent->Name);
+	memcpy(Buffer + BufferOffset, IN_Node->Parent->Name, PNameLen);
+	BufferOffset += PNameLen;
+
+	// Done
+	char* Result = DSON_CopyString(Buffer);
+	free(Buffer);
+	return Result;
+}
+
+DSON_StringList DSON_GetKeyList(DSON_Node* IN_Node) {
+	size_t Count = DSON_CountValues(IN_Node);
+	DSON_StringList Result;
+
+	if (Count == 0) { return Result; }
+
+	Result.Entries = (char**)malloc(sizeof(char*) * Count);
+	Result.Offsets = (int*)malloc(sizeof(int));
+	Result.Num = Count;
+	
+	char* CurrPath = DSON_GetNodePath(IN_Node);
+	size_t Index = 0;
+
+	if (Count == 1 && IN_Node->Childs->Num == 0) {
+		Result.Entries[0] = DSON_MakeString("%s/%s", CurrPath, IN_Node->Name);
+		return Result;
+	}
+
+	size_t Num = IN_Node->Childs->Num;
+	for (size_t X = 0; X < Num; X++) {
+		DSON_StringList TempList = DSON_GetKeyList(IN_Node->Childs->Entries[X]);
+		size_t TNum = TempList.Num;
+		if (TNum > 0) {
+			for (size_t Y = 0; Y < TNum; Y++) {
+				Result.Entries[Index++] = DSON_MakeString(
+					"%s",
+					TempList.Entries[Y]
+				);
+			}
+		}
+		DSON_FreeStringList(&TempList);
+	}
+
+	return Result;
+}
 
 // ----------------------------------------------------------------------
 // DSON Token

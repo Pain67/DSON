@@ -133,6 +133,8 @@ extern "C" {
     bool DSON_Node_Remove(DSON_Node* IN_Node, char* IN_Key);
     DSON_Node* DSON_GetSubNode(DSON_Node* IN_Node, char* IN_Key);
     size_t DSON_CountValues(DSON_Node* IN_Node);
+    char* DSON_GetNodePath(DSON_Node* IN_Node);
+    DSON_StringList DSON_GetKeyList(DSON_Node* IN_Node);
 
     // ----------------------------------------------------------------------
     // DSON Token
