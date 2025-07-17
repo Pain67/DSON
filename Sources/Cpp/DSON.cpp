@@ -310,6 +310,7 @@ bool Node::GetisGroup() { return DSON_Node_isGroup(RawNode); }
 bool Node::GetisEmpty() { return DSON_Node_isEmpty(RawNode); }
 int Node::GetCount() { return DSON_Node_Count(RawNode); }
 DSON_Node* Node::GetRawNode() { return RawNode; }
+size_t Node::GetValuesCount() { return DSON_CountValues(RawNode); }
 
 std::string Node::GetBasePath() {
     std::string Result;

@@ -1002,6 +1002,23 @@ DSON_Node* DSON_GetSubNode(DSON_Node* IN_Node, char* IN_Key) {
 		return Result;
 	}
 }
+size_t DSON_CountValues(DSON_Node* IN_Node) {
+	if (IN_Node == NULL) { return 0; }
+	// If Value is not null, it must be a value and not a group
+	if (IN_Node->Value != NULL) { return 1; }
+	// if ChildNum is 0, it must be a value or empty (Emptu is counted as a Value)
+	if (IN_Node->Childs->Num == 0) { return 1; }
+
+	// Any other case, Check each childs
+	size_t Result = 0;
+
+	size_t Num = IN_Node->Childs->Num;
+	for (size_t X = 0; X < Num; X++) {
+		Result += DSON_CountValues(IN_Node->Childs->Entries[X]);
+	}
+
+	return Result;
+}
 
 // ----------------------------------------------------------------------
 // DSON Token

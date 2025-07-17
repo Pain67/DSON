@@ -67,6 +67,8 @@ namespace DSON {
         int GetCount();
         DSON_Node* GetRawNode();
 
+        size_t GetValuesCount();
+
         std::string GetBasePath();
         void SetBasePath(std::string IN_BasePath);
         void AddBasePath(std::string IN_Path);
