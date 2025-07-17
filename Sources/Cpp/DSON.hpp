@@ -80,6 +80,6 @@ namespace DSON {
 
         static Node ParseFromTextFile(std::string IN_FileName);
         static Node ParseFromString(std::string IN_String);
-        static Node CreateEmptyNode();
+        static Node CreateEmptyNode(std::string IN_Name);
     };
 }

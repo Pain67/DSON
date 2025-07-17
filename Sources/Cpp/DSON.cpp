@@ -413,8 +413,15 @@ Node Node::ParseFromTextFile(std::string IN_FileName) {
 Node Node::ParseFromString(std::string IN_String) {
     return(Node(DSON_ParseString(&IN_String[0])));
 }
-Node Node::CreateEmptyNode() {
-    return Node(DSON_CreateEmptyNode());
+Node Node::CreateEmptyNode(std::string IN_Name) {
+    int Len = IN_Name.length();
+    DSON_Node* NewNode = DSON_CreateEmptyNode();
+    if (Len > 0) {
+        NewNode->Name = (char*)malloc((sizeof(char) * Len) + 1);
+        memcpy(NewNode->Name, &IN_Name[0], Len);
+        NewNode->Name[Len] = 0;
+    }
+    return Node(NewNode);
 }
 
 
